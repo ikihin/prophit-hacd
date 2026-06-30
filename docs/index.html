@@ -4,24 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PROPHIT — Prediction Market on HACD</title>
-    <meta name="description" content="PROPHIT (PRT) — A prediction market Stack Asset formed through HACD. Predict. Stake. Prove it.">
+    <meta name="description" content="PROPHIT (PRT) — PoW-backed prediction market. Stake your calls, earn from accuracy.">
     <meta property="og:title" content="PROPHIT — Prediction Market on HACD">
     <meta property="og:description" content="Put your alpha where your HACD is. PoW-backed prediction market tokens formed through HACD Stack.">
-    <meta property="og:type" content="website">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         :root {
             --bg: #0a0a0f;
-            --surface: #12121a;
+            --surface: #111118;
+            --surface-2: #1a1a24;
             --border: #1e1e2e;
             --accent: #8b5cf6;
             --accent-glow: #a78bfa;
+            --green: #10b981;
+            --green-dim: rgba(16, 185, 129, 0.1);
+            --red: #ef4444;
+            --red-dim: rgba(239, 68, 68, 0.1);
+            --yellow: #eab308;
             --text: #e2e8f0;
             --text-muted: #94a3b8;
-            --success: #10b981;
+            --text-dim: #64748b;
         }
-
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
             background: var(--bg);
@@ -29,306 +32,144 @@
             line-height: 1.6;
             overflow-x: hidden;
         }
-
         .gradient-bg {
             position: fixed;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle at 30% 20%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
-                        radial-gradient(circle at 70% 80%, rgba(16, 185, 129, 0.05) 0%, transparent 50%);
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle at 30% 20%, rgba(139, 92, 246, 0.06) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 80%, rgba(16, 185, 129, 0.04) 0%, transparent 50%);
             z-index: -1;
-            animation: drift 20s ease-in-out infinite;
         }
-
-        @keyframes drift {
-            0%, 100% { transform: translate(0, 0); }
-            50% { transform: translate(-2%, -1%); }
-        }
-
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 0 24px;
-        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
 
         /* Nav */
-        nav {
-            padding: 24px 0;
-            border-bottom: 1px solid var(--border);
-        }
-        nav .container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-            background: linear-gradient(135deg, var(--accent), var(--accent-glow));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .nav-links {
-            display: flex;
-            gap: 32px;
-            list-style: none;
-        }
-        .nav-links a {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 0.9rem;
-            transition: color 0.2s;
-        }
+        nav { padding: 20px 0; border-bottom: 1px solid var(--border); backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 100; background: rgba(10, 10, 15, 0.85); }
+        nav .container { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.5px; background: linear-gradient(135deg, var(--accent), var(--accent-glow)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .logo-sub { font-size: 0.7rem; color: var(--text-dim); font-weight: 400; letter-spacing: 2px; text-transform: uppercase; }
+        .nav-links { display: flex; gap: 28px; list-style: none; }
+        .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.85rem; transition: color 0.2s; }
         .nav-links a:hover { color: var(--text); }
+        .nav-btn { padding: 8px 20px; background: var(--accent); color: white; border-radius: 8px; font-size: 0.85rem; font-weight: 600; text-decoration: none; transition: all 0.2s; }
+        .nav-btn:hover { background: #7c3aed; transform: translateY(-1px); }
 
         /* Hero */
-        .hero {
-            padding: 120px 0 80px;
-            text-align: center;
-        }
-        .hero-badge {
-            display: inline-block;
-            padding: 6px 16px;
-            background: rgba(139, 92, 246, 0.1);
-            border: 1px solid rgba(139, 92, 246, 0.3);
-            border-radius: 100px;
-            font-size: 0.8rem;
-            color: var(--accent-glow);
-            margin-bottom: 24px;
-            letter-spacing: 0.5px;
-        }
-        .hero h1 {
-            font-size: clamp(2.5rem, 6vw, 4rem);
-            font-weight: 800;
-            letter-spacing: -1.5px;
-            line-height: 1.1;
-            margin-bottom: 20px;
-        }
-        .hero h1 span {
-            background: linear-gradient(135deg, var(--accent), var(--accent-glow), var(--success));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .hero p {
-            font-size: 1.2rem;
-            color: var(--text-muted);
-            max-width: 600px;
-            margin: 0 auto 40px;
-        }
-        .cta-group {
-            display: flex;
-            gap: 16px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        .btn {
-            padding: 14px 32px;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.2s;
-            cursor: pointer;
-            border: none;
-        }
-        .btn-primary {
-            background: linear-gradient(135deg, var(--accent), #7c3aed);
-            color: white;
-            box-shadow: 0 4px 20px rgba(139, 92, 246, 0.3);
-        }
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(139, 92, 246, 0.4);
-        }
-        .btn-secondary {
-            background: var(--surface);
-            color: var(--text);
-            border: 1px solid var(--border);
-        }
-        .btn-secondary:hover {
-            border-color: var(--accent);
-            background: rgba(139, 92, 246, 0.05);
-        }
+        .hero { padding: 100px 0 60px; text-align: center; }
+        .hero-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 16px; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 100px; font-size: 0.75rem; color: var(--green); margin-bottom: 24px; }
+        .hero-badge::before { content: ''; width: 6px; height: 6px; background: var(--green); border-radius: 50%; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+        .hero h1 { font-size: clamp(2.5rem, 5.5vw, 3.8rem); font-weight: 800; letter-spacing: -1.5px; line-height: 1.1; margin-bottom: 20px; }
+        .hero h1 span { background: linear-gradient(135deg, var(--accent), var(--accent-glow)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero p { font-size: 1.15rem; color: var(--text-muted); max-width: 550px; margin: 0 auto 36px; }
 
-        /* Stats */
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1px;
-            background: var(--border);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            overflow: hidden;
-            margin: 80px 0;
-        }
-        .stat {
-            background: var(--surface);
-            padding: 32px;
-            text-align: center;
-        }
-        .stat-value {
-            font-size: 2rem;
-            font-weight: 800;
-            color: var(--accent-glow);
-            margin-bottom: 4px;
-        }
-        .stat-label {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+        /* Live Markets */
+        .markets-section { padding: 40px 0 80px; }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .section-header h2 { font-size: 1.3rem; font-weight: 700; }
+        .section-header .tag { font-size: 0.75rem; color: var(--green); background: var(--green-dim); padding: 4px 12px; border-radius: 100px; }
+        .markets-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px; }
+        .market-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 24px; transition: border-color 0.2s; }
+        .market-card:hover { border-color: var(--accent); }
+        .market-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+        .market-card-title { font-size: 0.95rem; font-weight: 600; line-height: 1.4; max-width: 75%; }
+        .market-card-tag { font-size: 0.7rem; padding: 3px 8px; border-radius: 6px; font-weight: 500; }
+        .tag-active { background: var(--green-dim); color: var(--green); }
+        .tag-closing { background: rgba(234, 179, 8, 0.1); color: var(--yellow); }
+        .market-card-pool { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .pool-info { font-size: 0.8rem; color: var(--text-dim); }
+        .pool-amount { font-size: 1.1rem; font-weight: 700; color: var(--accent-glow); }
+        .market-options { display: flex; gap: 8px; }
+        .market-opt { flex: 1; padding: 12px; border-radius: 10px; text-align: center; cursor: pointer; transition: all 0.2s; border: 1px solid transparent; }
+        .market-opt-yes { background: var(--green-dim); border-color: rgba(16, 185, 129, 0.2); }
+        .market-opt-yes:hover { border-color: var(--green); }
+        .market-opt-no { background: var(--red-dim); border-color: rgba(239, 68, 68, 0.2); }
+        .market-opt-no:hover { border-color: var(--red); }
+        .market-opt-label { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px; }
+        .market-opt-value { font-size: 1rem; font-weight: 700; }
+        .market-opt-yes .market-opt-value { color: var(--green); }
+        .market-opt-no .market-opt-value { color: var(--red); }
+        .market-bar { height: 4px; border-radius: 4px; background: var(--red-dim); margin-top: 16px; overflow: hidden; }
+        .market-bar-fill { height: 100%; background: var(--green); border-radius: 4px; }
+        .market-meta { display: flex; justify-content: space-between; margin-top: 10px; font-size: 0.7rem; color: var(--text-dim); }
 
-        /* Sections */
-        section {
-            padding: 80px 0;
-        }
-        section h2 {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 16px;
-            letter-spacing: -0.5px;
-        }
-        section .subtitle {
-            color: var(--text-muted);
-            font-size: 1.1rem;
-            margin-bottom: 48px;
-            max-width: 600px;
-        }
+        /* Leaderboard */
+        .leaderboard-section { padding: 60px 0; }
+        .leaderboard { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+        .lb-header { display: grid; grid-template-columns: 50px 1fr 100px 100px 100px; padding: 14px 24px; background: var(--surface-2); font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--border); }
+        .lb-row { display: grid; grid-template-columns: 50px 1fr 100px 100px 100px; padding: 16px 24px; border-bottom: 1px solid var(--border); align-items: center; transition: background 0.2s; }
+        .lb-row:hover { background: var(--surface-2); }
+        .lb-row:last-child { border-bottom: none; }
+        .lb-rank { font-weight: 700; color: var(--accent-glow); }
+        .lb-user { display: flex; align-items: center; gap: 10px; }
+        .lb-avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--green)); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; }
+        .lb-name { font-weight: 600; font-size: 0.9rem; }
+        .lb-address { font-size: 0.7rem; color: var(--text-dim); font-family: monospace; }
+        .lb-stat { font-weight: 600; font-size: 0.9rem; text-align: right; }
+        .lb-stat.green { color: var(--green); }
+        .lb-prt { text-align: right; color: var(--accent-glow); font-weight: 600; }
 
         /* How it works */
-        .steps {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 24px;
-        }
-        .step {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 32px;
-            transition: border-color 0.2s;
-        }
-        .step:hover { border-color: var(--accent); }
-        .step-num {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 36px;
-            height: 36px;
-            background: rgba(139, 92, 246, 0.1);
-            border-radius: 10px;
-            font-weight: 700;
-            color: var(--accent-glow);
-            margin-bottom: 16px;
-            font-size: 0.9rem;
-        }
-        .step h3 {
-            font-size: 1.1rem;
-            margin-bottom: 8px;
-        }
-        .step p {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
+        .how-section { padding: 80px 0; }
+        .how-section h2 { font-size: 2rem; font-weight: 700; margin-bottom: 12px; }
+        .how-section .subtitle { color: var(--text-muted); margin-bottom: 48px; max-width: 500px; }
+        .how-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .how-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 28px; position: relative; overflow: hidden; }
+        .how-card::before { content: attr(data-step); position: absolute; top: 16px; right: 20px; font-size: 3rem; font-weight: 900; color: rgba(139, 92, 246, 0.08); }
+        .how-icon { font-size: 1.5rem; margin-bottom: 14px; }
+        .how-card h3 { font-size: 1rem; margin-bottom: 8px; }
+        .how-card p { font-size: 0.85rem; color: var(--text-muted); }
 
-        /* Features */
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 24px;
-        }
-        .feature {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 32px;
-        }
-        .feature-icon {
-            font-size: 2rem;
-            margin-bottom: 16px;
-        }
-        .feature h3 {
-            margin-bottom: 8px;
-        }
-        .feature p {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
+        /* Stats bar */
+        .stats-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; margin: 60px 0; }
+        .stat-item { background: var(--surface); padding: 28px 20px; text-align: center; }
+        .stat-value { font-size: 1.6rem; font-weight: 800; color: var(--text); margin-bottom: 4px; }
+        .stat-value.accent { color: var(--accent-glow); }
+        .stat-label { font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; }
 
         /* Tokenomics */
-        .token-table {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            overflow: hidden;
-            max-width: 600px;
-        }
-        .token-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 20px 32px;
-            border-bottom: 1px solid var(--border);
-        }
+        .token-section { padding: 60px 0; }
+        .token-section h2 { font-size: 2rem; font-weight: 700; margin-bottom: 12px; }
+        .token-section .subtitle { color: var(--text-muted); margin-bottom: 36px; }
+        .token-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .token-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 28px; }
+        .token-card h3 { font-size: 0.85rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 16px; }
+        .token-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); }
         .token-row:last-child { border-bottom: none; }
-        .token-row .label {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
-        .token-row .value {
-            font-weight: 700;
-            color: var(--text);
-        }
+        .token-row .label { color: var(--text-muted); font-size: 0.85rem; }
+        .token-row .value { font-weight: 600; font-size: 0.9rem; }
+        .supply-visual { margin-top: 20px; }
+        .supply-bar { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; margin-bottom: 8px; }
+        .supply-bar-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--accent), var(--green)); width: 0%; animation: fillBar 2s ease forwards; }
+        @keyframes fillBar { to { width: 100%; } }
+        .supply-labels { display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--text-dim); }
 
-        /* CTA section */
-        .cta-section {
-            text-align: center;
-            padding: 100px 0;
-        }
-        .cta-section h2 {
-            margin-bottom: 16px;
-        }
-        .cta-section p {
-            color: var(--text-muted);
-            margin-bottom: 32px;
-            font-size: 1.1rem;
-        }
+        /* CTA */
+        .cta-section { padding: 100px 0; text-align: center; }
+        .cta-section h2 { font-size: 2rem; font-weight: 700; margin-bottom: 12px; }
+        .cta-section p { color: var(--text-muted); margin-bottom: 32px; font-size: 1.05rem; }
+        .cta-buttons { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+        .btn { padding: 14px 32px; border-radius: 12px; font-size: 0.95rem; font-weight: 600; text-decoration: none; transition: all 0.2s; border: none; cursor: pointer; }
+        .btn-primary { background: linear-gradient(135deg, var(--accent), #7c3aed); color: white; box-shadow: 0 4px 20px rgba(139, 92, 246, 0.3); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(139, 92, 246, 0.4); }
+        .btn-ghost { background: transparent; color: var(--text); border: 1px solid var(--border); }
+        .btn-ghost:hover { border-color: var(--accent); }
 
         /* Footer */
-        footer {
-            border-top: 1px solid var(--border);
-            padding: 32px 0;
-            text-align: center;
-            color: var(--text-muted);
-            font-size: 0.85rem;
-        }
-        footer a {
-            color: var(--accent-glow);
-            text-decoration: none;
-        }
-
-        /* Risk banner */
-        .risk-banner {
-            background: rgba(234, 179, 8, 0.05);
-            border: 1px solid rgba(234, 179, 8, 0.2);
-            border-radius: 12px;
-            padding: 20px 28px;
-            margin-top: 48px;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            line-height: 1.7;
-        }
-        .risk-banner strong {
-            color: #eab308;
-        }
+        footer { border-top: 1px solid var(--border); padding: 32px 0; }
+        .footer-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+        .footer-left { font-size: 0.8rem; color: var(--text-dim); }
+        .footer-links { display: flex; gap: 20px; }
+        .footer-links a { color: var(--text-muted); text-decoration: none; font-size: 0.8rem; }
+        .footer-links a:hover { color: var(--text); }
+        .disclaimer { margin-top: 20px; padding: 16px 20px; background: rgba(234, 179, 8, 0.04); border: 1px solid rgba(234, 179, 8, 0.15); border-radius: 10px; font-size: 0.75rem; color: var(--text-dim); line-height: 1.7; }
 
         @media (max-width: 768px) {
             .nav-links { display: none; }
-            .hero { padding: 80px 0 60px; }
-            .stats { grid-template-columns: repeat(2, 1fr); }
+            .markets-grid { grid-template-columns: 1fr; }
+            .lb-header, .lb-row { grid-template-columns: 40px 1fr 80px 80px; }
+            .lb-header > :nth-child(4), .lb-row > :nth-child(4) { display: none; }
+            .token-grid { grid-template-columns: 1fr; }
+            .stats-bar { grid-template-columns: repeat(2, 1fr); }
         }
     </style>
 </head>
@@ -337,166 +178,380 @@
 
     <nav>
         <div class="container">
-            <div class="logo">PROPHIT</div>
+            <div>
+                <div class="logo">PROPHIT</div>
+                <div class="logo-sub">Prediction Market</div>
+            </div>
             <ul class="nav-links">
+                <li><a href="#markets">Markets</a></li>
+                <li><a href="#leaderboard">Leaderboard</a></li>
                 <li><a href="#how">How it Works</a></li>
-                <li><a href="#features">Features</a></li>
                 <li><a href="#tokenomics">Tokenomics</a></li>
-                <li><a href="https://github.com/ikihin/prophit-hacd" target="_blank">GitHub</a></li>
             </ul>
+            <a href="https://growstreams.xyz/app/projects/HACD" class="nav-btn" target="_blank">Join Launch</a>
         </div>
     </nav>
 
     <header class="hero">
         <div class="container">
-            <div class="hero-badge">HACD Labs Incubator Season 2</div>
-            <h1>Predict. Stake.<br><span>Prove it.</span></h1>
-            <p>A prediction market Stack Asset formed through HACD. Put your alpha where your HACD is — back your calls with real PoW formation cost.</p>
-            <div class="cta-group">
-                <a href="https://growstreams.xyz/app/projects/HACD" class="btn btn-primary" target="_blank">Join on GrowStreams</a>
-                <a href="#how" class="btn btn-secondary">Learn More</a>
+            <div class="hero-badge">Forming on HACD Stack — Incubator Season 2</div>
+            <h1>Back your calls<br>with <span>real conviction</span></h1>
+            <p>Prediction market where every token costs real PoW to form. No cheap talk — stake PRT, predict markets, earn from accuracy.</p>
+            <div class="cta-buttons">
+                <a href="https://growstreams.xyz/app/projects/HACD" class="btn btn-primary" target="_blank">Get PRT on Launch</a>
+                <a href="#markets" class="btn btn-ghost">View Markets</a>
             </div>
         </div>
     </header>
 
-    <div class="container">
-        <div class="stats">
-            <div class="stat">
-                <div class="stat-value">1,000,000</div>
-                <div class="stat-label">Total Supply (PRT)</div>
+    <!-- Live Markets -->
+    <section id="markets" class="markets-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Prediction Markets</h2>
+                <span class="tag">Preview</span>
             </div>
-            <div class="stat">
+            <div class="markets-grid">
+                <div class="market-card">
+                    <div class="market-card-header">
+                        <div class="market-card-title">Will BTC break $200K before August 2026?</div>
+                        <span class="market-card-tag tag-active">Active</span>
+                    </div>
+                    <div class="market-card-pool">
+                        <span class="pool-info">Total Pool</span>
+                        <span class="pool-amount">24,500 PRT</span>
+                    </div>
+                    <div class="market-options">
+                        <div class="market-opt market-opt-yes">
+                            <div class="market-opt-label">Yes</div>
+                            <div class="market-opt-value">67%</div>
+                        </div>
+                        <div class="market-opt market-opt-no">
+                            <div class="market-opt-label">No</div>
+                            <div class="market-opt-value">33%</div>
+                        </div>
+                    </div>
+                    <div class="market-bar"><div class="market-bar-fill" style="width:67%"></div></div>
+                    <div class="market-meta">
+                        <span>142 predictors</span>
+                        <span>Resolves: Aug 1, 2026</span>
+                    </div>
+                </div>
+
+                <div class="market-card">
+                    <div class="market-card-header">
+                        <div class="market-card-title">Will ETH flip BTC in market cap by end of 2026?</div>
+                        <span class="market-card-tag tag-active">Active</span>
+                    </div>
+                    <div class="market-card-pool">
+                        <span class="pool-info">Total Pool</span>
+                        <span class="pool-amount">18,200 PRT</span>
+                    </div>
+                    <div class="market-options">
+                        <div class="market-opt market-opt-yes">
+                            <div class="market-opt-label">Yes</div>
+                            <div class="market-opt-value">22%</div>
+                        </div>
+                        <div class="market-opt market-opt-no">
+                            <div class="market-opt-label">No</div>
+                            <div class="market-opt-value">78%</div>
+                        </div>
+                    </div>
+                    <div class="market-bar"><div class="market-bar-fill" style="width:22%"></div></div>
+                    <div class="market-meta">
+                        <span>89 predictors</span>
+                        <span>Resolves: Dec 31, 2026</span>
+                    </div>
+                </div>
+
+                <div class="market-card">
+                    <div class="market-card-header">
+                        <div class="market-card-title">Will SOL reach $500 in Q3 2026?</div>
+                        <span class="market-card-tag tag-closing">Closing Soon</span>
+                    </div>
+                    <div class="market-card-pool">
+                        <span class="pool-info">Total Pool</span>
+                        <span class="pool-amount">31,800 PRT</span>
+                    </div>
+                    <div class="market-options">
+                        <div class="market-opt market-opt-yes">
+                            <div class="market-opt-label">Yes</div>
+                            <div class="market-opt-value">45%</div>
+                        </div>
+                        <div class="market-opt market-opt-no">
+                            <div class="market-opt-label">No</div>
+                            <div class="market-opt-value">55%</div>
+                        </div>
+                    </div>
+                    <div class="market-bar"><div class="market-bar-fill" style="width:45%"></div></div>
+                    <div class="market-meta">
+                        <span>203 predictors</span>
+                        <span>Resolves: Sep 30, 2026</span>
+                    </div>
+                </div>
+
+                <div class="market-card">
+                    <div class="market-card-header">
+                        <div class="market-card-title">Will a US spot ETH ETF be approved by July 2026?</div>
+                        <span class="market-card-tag tag-active">Active</span>
+                    </div>
+                    <div class="market-card-pool">
+                        <span class="pool-info">Total Pool</span>
+                        <span class="pool-amount">15,600 PRT</span>
+                    </div>
+                    <div class="market-options">
+                        <div class="market-opt market-opt-yes">
+                            <div class="market-opt-label">Yes</div>
+                            <div class="market-opt-value">81%</div>
+                        </div>
+                        <div class="market-opt market-opt-no">
+                            <div class="market-opt-label">No</div>
+                            <div class="market-opt-value">19%</div>
+                        </div>
+                    </div>
+                    <div class="market-bar"><div class="market-bar-fill" style="width:81%"></div></div>
+                    <div class="market-meta">
+                        <span>67 predictors</span>
+                        <span>Resolves: Jul 31, 2026</span>
+                    </div>
+                </div>
+
+                <div class="market-card">
+                    <div class="market-card-header">
+                        <div class="market-card-title">Will HACD reach 1000+ daily active wallets this quarter?</div>
+                        <span class="market-card-tag tag-active">Active</span>
+                    </div>
+                    <div class="market-card-pool">
+                        <span class="pool-info">Total Pool</span>
+                        <span class="pool-amount">8,400 PRT</span>
+                    </div>
+                    <div class="market-options">
+                        <div class="market-opt market-opt-yes">
+                            <div class="market-opt-label">Yes</div>
+                            <div class="market-opt-value">38%</div>
+                        </div>
+                        <div class="market-opt market-opt-no">
+                            <div class="market-opt-label">No</div>
+                            <div class="market-opt-value">62%</div>
+                        </div>
+                    </div>
+                    <div class="market-bar"><div class="market-bar-fill" style="width:38%"></div></div>
+                    <div class="market-meta">
+                        <span>54 predictors</span>
+                        <span>Resolves: Sep 30, 2026</span>
+                    </div>
+                </div>
+
+                <div class="market-card">
+                    <div class="market-card-header">
+                        <div class="market-card-title">Will total crypto market cap exceed $5T in 2026?</div>
+                        <span class="market-card-tag tag-active">Active</span>
+                    </div>
+                    <div class="market-card-pool">
+                        <span class="pool-info">Total Pool</span>
+                        <span class="pool-amount">42,100 PRT</span>
+                    </div>
+                    <div class="market-options">
+                        <div class="market-opt market-opt-yes">
+                            <div class="market-opt-label">Yes</div>
+                            <div class="market-opt-value">72%</div>
+                        </div>
+                        <div class="market-opt market-opt-no">
+                            <div class="market-opt-label">No</div>
+                            <div class="market-opt-value">28%</div>
+                        </div>
+                    </div>
+                    <div class="market-bar"><div class="market-bar-fill" style="width:72%"></div></div>
+                    <div class="market-meta">
+                        <span>318 predictors</span>
+                        <span>Resolves: Dec 31, 2026</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Leaderboard -->
+    <section id="leaderboard" class="leaderboard-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Top Predictors</h2>
+                <span class="tag">Season 1</span>
+            </div>
+            <div class="leaderboard">
+                <div class="lb-header">
+                    <span>#</span>
+                    <span>Predictor</span>
+                    <span style="text-align:right">Win Rate</span>
+                    <span style="text-align:right">Streak</span>
+                    <span style="text-align:right">Earned</span>
+                </div>
+                <div class="lb-row">
+                    <span class="lb-rank">1</span>
+                    <div class="lb-user">
+                        <div class="lb-avatar">A</div>
+                        <div><div class="lb-name">AlphaVault</div><div class="lb-address">0x7a3f...8e2d</div></div>
+                    </div>
+                    <span class="lb-stat green">89%</span>
+                    <span class="lb-stat">12W</span>
+                    <span class="lb-prt">+14,200 PRT</span>
+                </div>
+                <div class="lb-row">
+                    <span class="lb-rank">2</span>
+                    <div class="lb-user">
+                        <div class="lb-avatar">S</div>
+                        <div><div class="lb-name">SatoshiSeer</div><div class="lb-address">0x2b1c...4f9a</div></div>
+                    </div>
+                    <span class="lb-stat green">84%</span>
+                    <span class="lb-stat">8W</span>
+                    <span class="lb-prt">+11,800 PRT</span>
+                </div>
+                <div class="lb-row">
+                    <span class="lb-rank">3</span>
+                    <div class="lb-user">
+                        <div class="lb-avatar">D</div>
+                        <div><div class="lb-name">DegenOracle</div><div class="lb-address">0x9e4d...1b3c</div></div>
+                    </div>
+                    <span class="lb-stat green">79%</span>
+                    <span class="lb-stat">6W</span>
+                    <span class="lb-prt">+9,450 PRT</span>
+                </div>
+                <div class="lb-row">
+                    <span class="lb-rank">4</span>
+                    <div class="lb-user">
+                        <div class="lb-avatar">C</div>
+                        <div><div class="lb-name">CryptoNostradamus</div><div class="lb-address">0x5f2a...7d8e</div></div>
+                    </div>
+                    <span class="lb-stat green">76%</span>
+                    <span class="lb-stat">5W</span>
+                    <span class="lb-prt">+7,300 PRT</span>
+                </div>
+                <div class="lb-row">
+                    <span class="lb-rank">5</span>
+                    <div class="lb-user">
+                        <div class="lb-avatar">M</div>
+                        <div><div class="lb-name">MoonMath</div><div class="lb-address">0x1d8f...3a5b</div></div>
+                    </div>
+                    <span class="lb-stat green">73%</span>
+                    <span class="lb-stat">4W</span>
+                    <span class="lb-prt">+5,900 PRT</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats -->
+    <div class="container">
+        <div class="stats-bar">
+            <div class="stat-item">
+                <div class="stat-value accent">1,000,000</div>
+                <div class="stat-label">Total PRT Supply</div>
+            </div>
+            <div class="stat-item">
                 <div class="stat-value">200</div>
                 <div class="stat-label">HACD Lots</div>
             </div>
-            <div class="stat">
+            <div class="stat-item">
                 <div class="stat-value">30 HAC</div>
-                <div class="stat-label">Stack Cost per Lot</div>
+                <div class="stat-label">Formation Cost</div>
             </div>
-            <div class="stat">
-                <div class="stat-value">5,000</div>
-                <div class="stat-label">PRT per Lot</div>
+            <div class="stat-item">
+                <div class="stat-value">0</div>
+                <div class="stat-label">Team Allocation</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" style="color: var(--green);">Deflationary</div>
+                <div class="stat-label">Supply Model</div>
             </div>
         </div>
     </div>
 
-    <section id="how">
+    <!-- How it works -->
+    <section id="how" class="how-section">
         <div class="container">
-            <h2>How it Works</h2>
-            <p class="subtitle">PROPHIT turns market predictions into a PoW-backed commitment game. No cheap talk — only conviction.</p>
-            <div class="steps">
-                <div class="step">
-                    <div class="step-num">1</div>
-                    <h3>Form PRT through HACD</h3>
-                    <p>Stack your HACD with 30 HAC to form 5,000 PRT per lot. Real cost, real tokens, real skin in the game.</p>
+            <h2>How PROPHIT Works</h2>
+            <p class="subtitle">From token formation to earning from your predictions — four simple steps.</p>
+            <div class="how-grid">
+                <div class="how-card" data-step="01">
+                    <div class="how-icon">&#9874;</div>
+                    <h3>Form PRT Tokens</h3>
+                    <p>Stack your HACD with 30 HAC to form 5,000 PRT per lot. Each token carries a real PoW formation cost — no free mints.</p>
                 </div>
-                <div class="step">
-                    <div class="step-num">2</div>
-                    <h3>Stake on Predictions</h3>
-                    <p>Use PRT to enter prediction markets — price calls, event outcomes, and more. Your tokens back your thesis.</p>
+                <div class="how-card" data-step="02">
+                    <div class="how-icon">&#127919;</div>
+                    <h3>Pick a Market</h3>
+                    <p>Browse active prediction markets. Will BTC hit a target? Will a protocol ship on time? Choose markets you have conviction on.</p>
                 </div>
-                <div class="step">
-                    <div class="step-num">3</div>
-                    <h3>Earn from Accuracy</h3>
-                    <p>Correct predictions earn PRT from incorrect stakers. Build a verifiable on-chain track record over time.</p>
+                <div class="how-card" data-step="03">
+                    <div class="how-icon">&#128176;</div>
+                    <h3>Stake Your Call</h3>
+                    <p>Lock PRT on your prediction (Yes/No). The more PRT staked, the more you can earn if your call is correct.</p>
+                </div>
+                <div class="how-card" data-step="04">
+                    <div class="how-icon">&#127942;</div>
+                    <h3>Earn & Rank Up</h3>
+                    <p>Correct predictors split the losing pool. Build your win streak, climb the leaderboard, and prove your alpha on-chain.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="features">
-        <div class="container">
-            <h2>Why PROPHIT on HACD</h2>
-            <p class="subtitle">Prediction markets need skin in the game from genesis. HACD Stack delivers exactly that.</p>
-            <div class="features">
-                <div class="feature">
-                    <div class="feature-icon">&#9878;</div>
-                    <h3>PoW-Backed Formation</h3>
-                    <p>Every PRT unit has a verifiable formation cost. No free mints, no airdrops, no inflation. Just PoW-backed conviction.</p>
-                </div>
-                <div class="feature">
-                    <div class="feature-icon">&#128274;</div>
-                    <h3>Fixed Supply Forever</h3>
-                    <p>1,000,000 PRT maximum. Once 200 lots are Stacked, no more can ever be created. Supply only goes down through burns.</p>
-                </div>
-                <div class="feature">
-                    <div class="feature-icon">&#128293;</div>
-                    <h3>Burn on Removal</h3>
-                    <p>Unstacking destroys PRT permanently. Your HACD is released, but the tokens are gone. Scarcity increases over time.</p>
-                </div>
-                <div class="feature">
-                    <div class="feature-icon">&#127942;</div>
-                    <h3>On-Chain Reputation</h3>
-                    <p>Every prediction is recorded. Top predictors build verifiable track records that anyone can audit.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="tokenomics">
+    <!-- Tokenomics -->
+    <section id="tokenomics" class="token-section">
         <div class="container">
             <h2>Tokenomics</h2>
-            <p class="subtitle">Simple, transparent, and fair. No hidden allocations.</p>
-            <div class="token-table">
-                <div class="token-row">
-                    <span class="label">Ticker</span>
-                    <span class="value">PRT</span>
+            <p class="subtitle">Transparent. Fair. Deflationary. No hidden games.</p>
+            <div class="token-grid">
+                <div class="token-card">
+                    <h3>Formation Parameters</h3>
+                    <div class="token-row"><span class="label">Ticker</span><span class="value">PRT</span></div>
+                    <div class="token-row"><span class="label">Type</span><span class="value">Fungible Token (FT)</span></div>
+                    <div class="token-row"><span class="label">Total Supply</span><span class="value">1,000,000 PRT</span></div>
+                    <div class="token-row"><span class="label">HACD Lots</span><span class="value">200</span></div>
+                    <div class="token-row"><span class="label">PRT per Lot</span><span class="value">5,000</span></div>
+                    <div class="token-row"><span class="label">Stack Cost</span><span class="value">30 HAC / HACD</span></div>
                 </div>
-                <div class="token-row">
-                    <span class="label">Total Supply</span>
-                    <span class="value">1,000,000 PRT</span>
+                <div class="token-card">
+                    <h3>Distribution & Rules</h3>
+                    <div class="token-row"><span class="label">Phase</span><span class="value">100% Public</span></div>
+                    <div class="token-row"><span class="label">Max per User</span><span class="value">5 lots (25K PRT)</span></div>
+                    <div class="token-row"><span class="label">Team Alloc</span><span class="value">None</span></div>
+                    <div class="token-row"><span class="label">Removal</span><span class="value">Burn (permanent)</span></div>
+                    <div class="token-row"><span class="label">Inflation</span><span class="value">Impossible</span></div>
+                    <div class="supply-visual">
+                        <div class="supply-bar"><div class="supply-bar-fill"></div></div>
+                        <div class="supply-labels"><span>0 PRT</span><span>1,000,000 PRT (Hard Cap)</span></div>
+                    </div>
                 </div>
-                <div class="token-row">
-                    <span class="label">HACD Lots</span>
-                    <span class="value">200</span>
-                </div>
-                <div class="token-row">
-                    <span class="label">PRT per Lot</span>
-                    <span class="value">5,000</span>
-                </div>
-                <div class="token-row">
-                    <span class="label">Stack Cost</span>
-                    <span class="value">30 HAC / HACD</span>
-                </div>
-                <div class="token-row">
-                    <span class="label">Max per Participant</span>
-                    <span class="value">5 Lots (25,000 PRT)</span>
-                </div>
-                <div class="token-row">
-                    <span class="label">Phase Model</span>
-                    <span class="value">Public (all lots open)</span>
-                </div>
-                <div class="token-row">
-                    <span class="label">Removal Effect</span>
-                    <span class="value">Burn (permanent)</span>
-                </div>
-                <div class="token-row">
-                    <span class="label">Team Allocation</span>
-                    <span class="value">None</span>
-                </div>
-            </div>
-
-            <div class="risk-banner">
-                <strong>Risk Disclosure:</strong> PRT is a utility Stack Asset for prediction market participation, not an investment product. No price, liquidity, listing, or return is guaranteed. Prediction market features are under development. Formation cost is non-refundable. Not financial advice.
             </div>
         </div>
     </section>
 
+    <!-- CTA -->
     <section class="cta-section">
         <div class="container">
-            <h2>Ready to back your calls?</h2>
-            <p>Join the PROPHIT formation through HACD Labs Incubator Season 2.</p>
-            <div class="cta-group">
-                <a href="https://growstreams.xyz/app/projects/HACD" class="btn btn-primary" target="_blank">Join Quest on GrowStreams</a>
-                <a href="https://github.com/ikihin/prophit-hacd" class="btn btn-secondary" target="_blank">View on GitHub</a>
+            <h2>Ready to back your alpha?</h2>
+            <p>PROPHIT is forming through HACD Labs Incubator Season 2. Be part of the genesis formation.</p>
+            <div class="cta-buttons">
+                <a href="https://growstreams.xyz/app/projects/HACD" class="btn btn-primary" target="_blank">Join on GrowStreams</a>
+                <a href="https://github.com/ikihin/prophit-hacd" class="btn btn-ghost" target="_blank">GitHub</a>
             </div>
         </div>
     </section>
 
     <footer>
         <div class="container">
-            <p>PROPHIT (PRT) &mdash; Formed through <a href="https://hacd.it" target="_blank">HACD Stack</a> | HACD Labs Incubator Season 2</p>
-            <p style="margin-top: 8px;">This is a draft structure pending HACD Labs review. Final parameters must be confirmed before Launchpad publication.</p>
+            <div class="footer-inner">
+                <div class="footer-left">PROPHIT (PRT) &mdash; Formed through <a href="https://hacd.it" target="_blank" style="color:var(--accent-glow);text-decoration:none;">HACD Stack</a></div>
+                <div class="footer-links">
+                    <a href="https://github.com/ikihin/prophit-hacd" target="_blank">GitHub</a>
+                    <a href="https://growstreams.xyz/app/projects/HACD" target="_blank">GrowStreams</a>
+                    <a href="https://hacd.it" target="_blank">HACD</a>
+                </div>
+            </div>
+            <div class="disclaimer">
+                <strong style="color:#eab308;">Disclaimer:</strong> PRT is a utility Stack Asset for prediction market participation, not an investment product. No price, liquidity, listing, or return is guaranteed. Market predictions shown are illustrative examples. Prediction platform features are under development. Formation cost is non-refundable. Not financial advice. Draft structure pending HACD Labs review.
+            </div>
         </div>
     </footer>
 </body>
