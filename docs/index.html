@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PROPHIT — Prediction Market on HACD</title>
+    <meta name="description" content="PROPHIT (PRT) — A prediction market Stack Asset formed through HACD. Predict. Stake. Prove it.">
+    <meta property="og:title" content="PROPHIT — Prediction Market on HACD">
+    <meta property="og:description" content="Put your alpha where your HACD is. PoW-backed prediction market tokens formed through HACD Stack.">
+    <meta property="og:type" content="website">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #0a0a0f;
+            --surface: #12121a;
+            --border: #1e1e2e;
+            --accent: #8b5cf6;
+            --accent-glow: #a78bfa;
+            --text: #e2e8f0;
+            --text-muted: #94a3b8;
+            --success: #10b981;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .gradient-bg {
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 20%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 80%, rgba(16, 185, 129, 0.05) 0%, transparent 50%);
+            z-index: -1;
+            animation: drift 20s ease-in-out infinite;
+        }
+
+        @keyframes drift {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-2%, -1%); }
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Nav */
+        nav {
+            padding: 24px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-glow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+        }
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover { color: var(--text); }
+
+        /* Hero */
+        .hero {
+            padding: 120px 0 80px;
+            text-align: center;
+        }
+        .hero-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 100px;
+            font-size: 0.8rem;
+            color: var(--accent-glow);
+            margin-bottom: 24px;
+            letter-spacing: 0.5px;
+        }
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 800;
+            letter-spacing: -1.5px;
+            line-height: 1.1;
+            margin-bottom: 20px;
+        }
+        .hero h1 span {
+            background: linear-gradient(135deg, var(--accent), var(--accent-glow), var(--success));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 40px;
+        }
+        .cta-group {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 14px 32px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), #7c3aed);
+            color: white;
+            box-shadow: 0 4px 20px rgba(139, 92, 246, 0.3);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(139, 92, 246, 0.4);
+        }
+        .btn-secondary {
+            background: var(--surface);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            background: rgba(139, 92, 246, 0.05);
+        }
+
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1px;
+            background: var(--border);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            margin: 80px 0;
+        }
+        .stat {
+            background: var(--surface);
+            padding: 32px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--accent-glow);
+            margin-bottom: 4px;
+        }
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Sections */
+        section {
+            padding: 80px 0;
+        }
+        section h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            letter-spacing: -0.5px;
+        }
+        section .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 48px;
+            max-width: 600px;
+        }
+
+        /* How it works */
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+        .step {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            transition: border-color 0.2s;
+        }
+        .step:hover { border-color: var(--accent); }
+        .step-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: rgba(139, 92, 246, 0.1);
+            border-radius: 10px;
+            font-weight: 700;
+            color: var(--accent-glow);
+            margin-bottom: 16px;
+            font-size: 0.9rem;
+        }
+        .step h3 {
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+        .step p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Features */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+        .feature {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+        }
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 16px;
+        }
+        .feature h3 {
+            margin-bottom: 8px;
+        }
+        .feature p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Tokenomics */
+        .token-table {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            max-width: 600px;
+        }
+        .token-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px 32px;
+            border-bottom: 1px solid var(--border);
+        }
+        .token-row:last-child { border-bottom: none; }
+        .token-row .label {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        .token-row .value {
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        /* CTA section */
+        .cta-section {
+            text-align: center;
+            padding: 100px 0;
+        }
+        .cta-section h2 {
+            margin-bottom: 16px;
+        }
+        .cta-section p {
+            color: var(--text-muted);
+            margin-bottom: 32px;
+            font-size: 1.1rem;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 32px 0;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+        footer a {
+            color: var(--accent-glow);
+            text-decoration: none;
+        }
+
+        /* Risk banner */
+        .risk-banner {
+            background: rgba(234, 179, 8, 0.05);
+            border: 1px solid rgba(234, 179, 8, 0.2);
+            border-radius: 12px;
+            padding: 20px 28px;
+            margin-top: 48px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+        .risk-banner strong {
+            color: #eab308;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .hero { padding: 80px 0 60px; }
+            .stats { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div class="gradient-bg"></div>
+
+    <nav>
+        <div class="container">
+            <div class="logo">PROPHIT</div>
+            <ul class="nav-links">
+                <li><a href="#how">How it Works</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#tokenomics">Tokenomics</a></li>
+                <li><a href="https://github.com/ikihin/prophit-hacd" target="_blank">GitHub</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <div class="container">
+            <div class="hero-badge">HACD Labs Incubator Season 2</div>
+            <h1>Predict. Stake.<br><span>Prove it.</span></h1>
+            <p>A prediction market Stack Asset formed through HACD. Put your alpha where your HACD is — back your calls with real PoW formation cost.</p>
+            <div class="cta-group">
+                <a href="https://growstreams.xyz/app/projects/HACD" class="btn btn-primary" target="_blank">Join on GrowStreams</a>
+                <a href="#how" class="btn btn-secondary">Learn More</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value">1,000,000</div>
+                <div class="stat-label">Total Supply (PRT)</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">200</div>
+                <div class="stat-label">HACD Lots</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">30 HAC</div>
+                <div class="stat-label">Stack Cost per Lot</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">5,000</div>
+                <div class="stat-label">PRT per Lot</div>
+            </div>
+        </div>
+    </div>
+
+    <section id="how">
+        <div class="container">
+            <h2>How it Works</h2>
+            <p class="subtitle">PROPHIT turns market predictions into a PoW-backed commitment game. No cheap talk — only conviction.</p>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-num">1</div>
+                    <h3>Form PRT through HACD</h3>
+                    <p>Stack your HACD with 30 HAC to form 5,000 PRT per lot. Real cost, real tokens, real skin in the game.</p>
+                </div>
+                <div class="step">
+                    <div class="step-num">2</div>
+                    <h3>Stake on Predictions</h3>
+                    <p>Use PRT to enter prediction markets — price calls, event outcomes, and more. Your tokens back your thesis.</p>
+                </div>
+                <div class="step">
+                    <div class="step-num">3</div>
+                    <h3>Earn from Accuracy</h3>
+                    <p>Correct predictions earn PRT from incorrect stakers. Build a verifiable on-chain track record over time.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="features">
+        <div class="container">
+            <h2>Why PROPHIT on HACD</h2>
+            <p class="subtitle">Prediction markets need skin in the game from genesis. HACD Stack delivers exactly that.</p>
+            <div class="features">
+                <div class="feature">
+                    <div class="feature-icon">&#9878;</div>
+                    <h3>PoW-Backed Formation</h3>
+                    <p>Every PRT unit has a verifiable formation cost. No free mints, no airdrops, no inflation. Just PoW-backed conviction.</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">&#128274;</div>
+                    <h3>Fixed Supply Forever</h3>
+                    <p>1,000,000 PRT maximum. Once 200 lots are Stacked, no more can ever be created. Supply only goes down through burns.</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">&#128293;</div>
+                    <h3>Burn on Removal</h3>
+                    <p>Unstacking destroys PRT permanently. Your HACD is released, but the tokens are gone. Scarcity increases over time.</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">&#127942;</div>
+                    <h3>On-Chain Reputation</h3>
+                    <p>Every prediction is recorded. Top predictors build verifiable track records that anyone can audit.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="tokenomics">
+        <div class="container">
+            <h2>Tokenomics</h2>
+            <p class="subtitle">Simple, transparent, and fair. No hidden allocations.</p>
+            <div class="token-table">
+                <div class="token-row">
+                    <span class="label">Ticker</span>
+                    <span class="value">PRT</span>
+                </div>
+                <div class="token-row">
+                    <span class="label">Total Supply</span>
+                    <span class="value">1,000,000 PRT</span>
+                </div>
+                <div class="token-row">
+                    <span class="label">HACD Lots</span>
+                    <span class="value">200</span>
+                </div>
+                <div class="token-row">
+                    <span class="label">PRT per Lot</span>
+                    <span class="value">5,000</span>
+                </div>
+                <div class="token-row">
+                    <span class="label">Stack Cost</span>
+                    <span class="value">30 HAC / HACD</span>
+                </div>
+                <div class="token-row">
+                    <span class="label">Max per Participant</span>
+                    <span class="value">5 Lots (25,000 PRT)</span>
+                </div>
+                <div class="token-row">
+                    <span class="label">Phase Model</span>
+                    <span class="value">Public (all lots open)</span>
+                </div>
+                <div class="token-row">
+                    <span class="label">Removal Effect</span>
+                    <span class="value">Burn (permanent)</span>
+                </div>
+                <div class="token-row">
+                    <span class="label">Team Allocation</span>
+                    <span class="value">None</span>
+                </div>
+            </div>
+
+            <div class="risk-banner">
+                <strong>Risk Disclosure:</strong> PRT is a utility Stack Asset for prediction market participation, not an investment product. No price, liquidity, listing, or return is guaranteed. Prediction market features are under development. Formation cost is non-refundable. Not financial advice.
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section">
+        <div class="container">
+            <h2>Ready to back your calls?</h2>
+            <p>Join the PROPHIT formation through HACD Labs Incubator Season 2.</p>
+            <div class="cta-group">
+                <a href="https://growstreams.xyz/app/projects/HACD" class="btn btn-primary" target="_blank">Join Quest on GrowStreams</a>
+                <a href="https://github.com/ikihin/prophit-hacd" class="btn btn-secondary" target="_blank">View on GitHub</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>PROPHIT (PRT) &mdash; Formed through <a href="https://hacd.it" target="_blank">HACD Stack</a> | HACD Labs Incubator Season 2</p>
+            <p style="margin-top: 8px;">This is a draft structure pending HACD Labs review. Final parameters must be confirmed before Launchpad publication.</p>
+        </div>
+    </footer>
+</body>
+</html>
